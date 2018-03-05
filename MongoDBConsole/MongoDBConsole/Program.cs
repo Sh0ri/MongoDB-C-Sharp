@@ -12,7 +12,15 @@ namespace MongoDBConsole
     {
         static void Main(string[] args)
         {
-            MainAsync().Wait();
+            //MainAsync().Wait();
+
+            BsonDocument[] Bsonlines = GetValues();
+
+            foreach (BsonDocument data in Bsonlines)
+            {
+                Console.WriteLine(data.ToString());
+                //await collection.InsertOneAsync(data);
+            }
 
             Console.WriteLine("test");
 
@@ -28,6 +36,7 @@ namespace MongoDBConsole
             foreach(string line in lines)
             {
                 Bsonlines[compt] = BsonDocument.Parse(line);
+                compt++;
             }
 
             return Bsonlines;
