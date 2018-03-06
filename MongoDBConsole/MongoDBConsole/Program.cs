@@ -28,25 +28,25 @@ namespace MongoDBConsole
 
             Console.WriteLine("test");
 
-            int caseSwitch = 1;
+            var caseSwitch = Console.ReadKey();
 
             Console.WriteLine("Press 0 for reformating the JSON file to fit in the cassandra database, 1 for Simple Queries, 2 for Complex Queries, 3 for Hard Query");
 
-            switch (caseSwitch)
+            switch (caseSwitch.Key.ToString())
             {
-                case 1:
+                case "1":
                     Console.WriteLine("Simple Queries");
                     SimpleQueriesAsync(collection).Wait();
                     break;
-                case 2:
+                case "2":
                     Console.WriteLine("Complex Queries");
                     ComplexQueriesAsync(collection).Wait();
                     break;
-                case 3:
+                case "3":
                     Console.WriteLine("Hard Query");
                     HardQueryAsync(collection).Wait();
                     break;
-                case 0:
+                case "0":
                     Console.WriteLine("Formatting JSON file to insert in cassandra");
                     Insert_Values(collection).Wait();
                     break;
