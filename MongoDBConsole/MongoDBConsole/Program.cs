@@ -40,11 +40,11 @@ namespace MongoDBConsole
                     break;
                 case 2:
                     Console.WriteLine("Complex Queries");
-                    ComplexQueries(collection);
+                    ComplexQueriesAsync(collection).Wait();
                     break;
                 case 3:
                     Console.WriteLine("Hard Query");
-                    HardQuery(collection);
+                    HardQueryAsync(collection).Wait();
                     break;
                 case 0:
                     Console.WriteLine("Formatting JSON file to insert in cassandra");
@@ -61,34 +61,50 @@ namespace MongoDBConsole
         {
             Console.WriteLine("First Easy Query : select housenumber, road from ottawa_permits limit 10\n");
 
-            var filter = "{ housenumber: 623}";
+            var filter = "{{}, {housenumber : 1, road : 1, _id : 0}}";
 
             await collection.Find(filter)
                 .ForEachAsync(document => Console.WriteLine(document));
 
-            //Console.WriteLine("\nSecond Easy Query : select municipality from ottawa_permits where year = 2011 LIMIT 10 ALLOW FILTERING\n");
+            Console.WriteLine("\nSecond Easy Query : select municipality from ottawa_permits where year = 2011 LIMIT 10 ALLOW FILTERING\n");
+
+            var filter2 = "{{year : 2011}, {municipality : 1, _id : 0}}";
+
+            await collection.Find(filter2)
+                .ForEachAsync(document => Console.WriteLine(document));
 
             //Main(null);
         }
 
-        static void ComplexQueries(IMongoCollection<BsonDocument> collection)
+        static async Task ComplexQueriesAsync(IMongoCollection<BsonDocument> collection)
         {
             Console.WriteLine("First Complex Query : SELECT permits.filename from ottawa_permits where month='July' limit 10 ALLOW FILTERING\n");
+            var filter = "{{month : 'July'}, {'permits.filename' : 1, _id : 0}}";
 
+            await collection.Find(filter)
+                .ForEachAsync(document => Console.WriteLine(document));
 
 
             Console.WriteLine("\nSecond Complex Query : select id.oid, municipality, permits.contractor from ottawa_permits where housenumber > 500 LIMIT 10 ALLOW FILTERING\n");
 
+            var filter2 = "{{housenumber : {$gt : 500}}, {municipality : 1, 'permits.CONTRACTOR' : 1, _id : 1}}";
 
+            await collection.Find(filter2)
+                .ForEachAsync(document => Console.WriteLine(document));
 
-            Main(null);
+            //Main(null);
         }
 
-        static void HardQuery(IMongoCollection<BsonDocument> collection)
+        static async Task HardQueryAsync(IMongoCollection<BsonDocument> collection)
         {
             Console.WriteLine("Hard Query : select permits.contractor, municipality from ottawa_permits where year = 2011 limit 20 ALLOW FILTERING\n");
 
-            Main(null);
+            var filter = "{{year : 2011}, {municipality : 1, 'permits.CONTRACTOR' : 1, _id : 1}}";
+
+            await collection.Find(filter)
+                .ForEachAsync(document => Console.WriteLine(document));
+
+            //Main(null);
         }
 
 
